@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 import translator as tr
 import os
 from tkinter import *
@@ -67,19 +69,31 @@ def getdata():
         info_ru.delete(index1='1.0', index2=END)
 
     articul = id_input.get().__str__().strip()
-    scrap(articul)
+    if scrap(articul) is False:
+        return
+    print('heading3')
     copy_btn.grid(column=0, row=0, sticky='se')
 
     commit_btn['state'] = DISABLED
     commit_btn.config(text='Заванаження...')
-
+    print("Heading4")
     thread.Thread(target=get_product_enable_save_toggle_scrap, args=(articul,)).start()
 
 
 def scrap(articul):
-    info_en.insert(END, str(sc.get_info(articul)))
+    info = sc.get_info(articul)
+    if info is None:
+        error('Товар відсутній на донорі')
+        return False
+    print('heading')
+    info_en.insert(END, str(info))
     info_en.config(state=DISABLED)
     rb_en.invoke()
+    print('heading2')
+
+
+def error(message):
+    messagebox.showinfo('Помилка', message)
 
 
 def get_check_product(articul):

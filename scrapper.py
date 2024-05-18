@@ -1,3 +1,4 @@
+from urllib.error import HTTPError
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
@@ -5,7 +6,11 @@ from bs4 import BeautifulSoup
 def get_info(id):
     url = "https://www.kare-design.com/shop/ua/ru/query/" + id
 
-    page = urlopen(url)
+    try:
+        page = urlopen(url)
+    except HTTPError:
+        return None
+
     html_bytes = page.read()
     html = html_bytes.decode("utf-8")
 
