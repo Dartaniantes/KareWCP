@@ -8,11 +8,20 @@ trClient = tr.Client()
 
 
 def get_ukr(text):
-    return trClient.translate(text, "uk", source_language="en").get('translatedText')
+    data = str(text).split("\n")
+    result = ''
+    for info in data:
+        result += trClient.translate(info, "uk", source_language="en").get('translatedText') + "\n"
+
+    return result
 
 
 def get_rus(text):
-    return trClient.translate(text, "ru", source_language="en").get('translatedText')
+    data = str(text).split("\n")
+    result = ''
+    for info in data:
+        result += trClient.translate(info, "ru", source_language="en").get('translatedText') + "\n"
+    return result
 
 
 def detect(text):

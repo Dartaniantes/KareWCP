@@ -61,6 +61,7 @@ def enable_scrap():
 
 def getdata():
     info_en.config(state=NORMAL)
+
     if info_en.get(index1='1.0', index2=END).__str__() != '':
         info_en.delete(index1='1.0', index2=END)
     if info_ua.get(index1='1.0', index2=END).__str__() != '':
@@ -71,12 +72,11 @@ def getdata():
     articul = id_input.get().__str__().strip()
     if scrap(articul) is False:
         return
-    print('heading3')
-    copy_btn.grid(column=0, row=0, sticky='se')
+    translate_btn['state'] = NORMAL
+    translate_btn.grid(column=0, row=0, sticky='se')
 
     commit_btn['state'] = DISABLED
     commit_btn.config(text='Заванаження...')
-    print("Heading4")
     thread.Thread(target=get_product_enable_save_toggle_scrap, args=(articul,)).start()
 
 
@@ -85,11 +85,24 @@ def scrap(articul):
     if info is None:
         error('Товар відсутній на донорі')
         return False
-    print('heading')
     info_en.insert(END, str(info))
     info_en.config(state=DISABLED)
     rb_en.invoke()
-    print('heading2')
+
+
+def translate_paste():
+    data_ru = tr.get_rus(info_en.get('1.0', END).__str__())
+    #index_ru = data_ru.find('Информация о товаре')
+    #text_ru = data_ru[:index_ru] + '\n' + data_ru[index_ru:]
+    info_ru.insert(END, data_ru)
+
+    data_ua = tr.get_ukr(info_en.get('1.0', END).__str__())
+    #index_ua = data_ua.find('Інформація про товар')
+    #text_ua = data_ua[:index_ua] + '\n' + data_ua[index_ua:]
+    info_ua.insert(END, data_ua)
+
+    translate_btn['state'] = DISABLED
+    translate_btn.config(text='Перекладено')
 
 
 def error(message):
@@ -119,10 +132,10 @@ def set_lang():
         info_ru.grid_forget()
         info_en.grid(column=0, row=2)
         commit_btn.grid_forget()
-        copy_btn.grid(column=0, row=0, sticky='se')
+        translate_btn.grid(column=0, row=0, sticky='se')
     else:
         info_en.grid_forget()
-        copy_btn.grid_forget()
+        translate_btn.grid_forget()
         commit_btn.grid(column=0, row=0, sticky='se')
         if lang.get() == 'ua':
             info_ru.grid_forget()
@@ -161,7 +174,7 @@ def save():
     #adm.commit_product(info_ua.get('1.0', END).__str__(), info_ru.get('1.0', END).__str__())
 
 
-copy_btn = Button(info_frame, text="Копіювати", command=copy_en, font=("Arial", 10))
+translate_btn = Button(info_frame, text="Перекласти", command=translate_paste, font=("Arial", 10))
 
 commit_btn = Button(info_frame, text="Зберегти товар", command=save, font=("Arial", 10))
 commit_btn['state'] = DISABLED
